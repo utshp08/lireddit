@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Post = void 0;
 const core_1 = require("@mikro-orm/core");
+const type_graphql_1 = require("type-graphql");
 let Post = class Post {
     constructor() {
         this.createdAt = new Date();
@@ -18,22 +19,29 @@ let Post = class Post {
     }
 };
 __decorate([
+    (0, type_graphql_1.Field)() // convert the field to graphql type
+    ,
     (0, core_1.PrimaryKey)({ autoincrement: true }),
     __metadata("design:type", Number)
 ], Post.prototype, "id", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(() => String),
     (0, core_1.Property)({ type: "date", nullable: true }),
     __metadata("design:type", Object)
 ], Post.prototype, "createdAt", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(() => String),
     (0, core_1.Property)({ type: "date", nullable: true, onUpdate: () => new Date() }),
     __metadata("design:type", Object)
 ], Post.prototype, "updatedAt", void 0);
 __decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.Property)({ type: "text" }),
     __metadata("design:type", String)
 ], Post.prototype, "title", void 0);
 Post = __decorate([
+    (0, type_graphql_1.ObjectType)() // convert the class to graphql type
+    ,
     (0, core_1.Entity)()
 ], Post);
 exports.Post = Post;
