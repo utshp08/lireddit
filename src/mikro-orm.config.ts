@@ -16,3 +16,4 @@ export default {
     type: 'postgresql',
     debug: !__prod__
 } as Parameters<typeof MikroORM.init>[0];
+//Convert object into an acceptable type of MikroOrm configuration

@@ -19,4 +19,5 @@ exports.default = {
     type: 'postgresql',
     debug: !constants_1.__prod__
 };
+//Convert object into an acceptable type of MikroOrm configuration
 //# sourceMappingURL=mikro-orm.config.js.map

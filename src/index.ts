@@ -19,7 +19,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, PostResolver],
+            resolvers: [HelloResolver, PostResolver], //register the entity resolvers
             validate: false,
         }),
         context: () => ({ em: orm.em })
