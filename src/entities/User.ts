@@ -3,7 +3,7 @@ import { Field, ObjectType } from "type-graphql";
 
 @ObjectType() // convert the class to an object type to remove graphql error
 @Entity()
-export class Post {
+export class User {
 
     @Field() // we can also convert the field to graphql type -> @Field(() => Type)
     @PrimaryKey({ autoincrement: true })
@@ -18,6 +18,10 @@ export class Post {
     updatedAt = new Date();
 
     @Field()
-    @Property({ type: "text" })
-    title!: String;
+    @Property({ type: "text", unique: true })
+    username!: String;
+    
+    @Field()
+    @Property({ type: "text"})
+    password!: String;
 }
