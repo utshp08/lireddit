@@ -79,8 +79,12 @@ let UserResolver = class UserResolver {
         const users = em.find("User", {});
         return users;
     }
-    user(id, { em }) {
-        const user = em.findOne("User", { id });
+    me({ req, em }) {
+        console.log(req.session);
+        if (!req.session.userId) {
+            return null;
+        }
+        const user = em.findOne(User_1.User, { id: req.session.userId });
         return user;
     }
     Register(options, { em }) {
@@ -124,7 +128,7 @@ let UserResolver = class UserResolver {
             };
         });
     }
-    Login(options, { em }) {
+    Login(options, { em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield em.findOne("User", { username: options.username });
             if (!user) {
@@ -148,6 +152,7 @@ let UserResolver = class UserResolver {
                     ]
                 };
             }
+            req.session.userId = user.id;
             return {
                 user
             };
@@ -162,13 +167,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "users", null);
 __decorate([
-    (0, type_graphql_1.Query)(() => [User_1.User]),
-    __param(0, (0, type_graphql_1.Arg)('id', () => type_graphql_1.Int)),
-    __param(1, (0, type_graphql_1.Ctx)()),
+    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    __param(0, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], UserResolver.prototype, "user", null);
+], UserResolver.prototype, "me", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options')),

@@ -47,12 +47,15 @@ export class UserResolver {
         return users;
     }
 
-    @Query(() => [User])
-    user(
-        @Arg('id', () => Int) id: number,
-        @Ctx() { em }: MyContext
+    @Query(() => User, { nullable: true })
+    me(
+        @Ctx() { req, em }: MyContext
     ) {
-        const user = em.findOne("User", { id });
+        console.log(req.session)
+        if (!req.session.userId) {
+            return null
+        }
+        const user = em.findOne(User, { id: req.session.userId });
         return user;
     }
 
@@ -102,7 +105,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async Login(
         @Arg('options') options: UsernameAndPasswordInput,
-        @Ctx() { em }: MyContext
+        @Ctx() { em, req }: MyContext
     ) {
         const user = await em.findOne<User>("User", { username: options.username });
         if (!user) {
@@ -126,6 +129,7 @@ export class UserResolver {
                 ]
             }
         }
+        req.session.userId = user.id
         return {
             user
         }
