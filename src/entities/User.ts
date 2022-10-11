@@ -4,7 +4,6 @@ import { Field, ObjectType } from "type-graphql";
 @ObjectType() // convert the class to an object type to remove graphql error
 @Entity()
 export class User {
-
     @Field() // we can also convert the field to graphql type -> @Field(() => Type)
     @PrimaryKey({ autoincrement: true })
     id!: number;
@@ -17,11 +16,11 @@ export class User {
     @Property({ type: "date", nullable: true, onUpdate: () => new Date() })
     updatedAt = new Date();
 
-    @Field()
+    @Field(() => String)
     @Property({ type: "text", unique: true })
-    username!: String;
+    username!: string;
     
-    @Field()
+    @Field(() => String)
     @Property({ type: "text"})
-    password!: String;
+    password!: string;
 }
