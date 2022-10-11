@@ -6,6 +6,9 @@ import { buildSchema } from 'type-graphql';
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/posts";
 import { UserResolver } from "./resolvers/users";
+import { __prod__ } from "./constants";
+
+const session = require('express-session');
 
 const main = async () => {
     const orm = await MikroORM.init(mikroConfig);
@@ -18,12 +21,25 @@ const main = async () => {
     // console.log(post)
     const app = express();
 
+    app.use(session({
+        store: new (require('connect-pg-simple')(session))({
+            conString: "pg://postgres:postgres@localhost:5432/lireddit",
+        }),
+        secret: process.env.FOO_COOKIE_SECRET || "devsecret",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        }, // 30 day
+        // Insert express-session options here
+    }));
+
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [HelloResolver, PostResolver, UserResolver], //register the entity resolvers
             validate: false,
         }),
-        context: () => ({ em: orm.em })
+        context: ({ req, res }) => ({ em: orm.em, req, res })
     })
 
     await apolloServer.start()

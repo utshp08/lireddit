@@ -3,6 +3,7 @@ import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 import { MikroORM } from "@mikro-orm/core";
 import path from 'path';
+import { Session } from "./entities/Session";
 
 export default {
     allowGlobalContext: true,
@@ -10,7 +11,7 @@ export default {
         path: path.join(__dirname, "./migrations"),
         pattern: /^[\w-]+\d+\.[tj]s$/,
     },
-    entities: [Post, User], // database tables
+    entities: [Post, User, Session], // database tables
     dbName: "lireddit",
     user: "postgres",
     password: "postgres",

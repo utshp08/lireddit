@@ -7,13 +7,14 @@ const constants_1 = require("./constants");
 const Post_1 = require("./entities/Post");
 const User_1 = require("./entities/User");
 const path_1 = __importDefault(require("path"));
+const Session_1 = require("./entities/Session");
 exports.default = {
     allowGlobalContext: true,
     migrations: {
         path: path_1.default.join(__dirname, "./migrations"),
         pattern: /^[\w-]+\d+\.[tj]s$/,
     },
-    entities: [Post_1.Post, User_1.User],
+    entities: [Post_1.Post, User_1.User, Session_1.Session],
     dbName: "lireddit",
     user: "postgres",
     password: "postgres",

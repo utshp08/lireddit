@@ -20,6 +20,7 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const posts_1 = require("./resolvers/posts");
 const users_1 = require("./resolvers/users");
+const session = require('express-session');
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const orm = yield core_1.MikroORM.init(mikro_orm_config_1.default);
     yield orm.getMigrator().up();
@@ -28,12 +29,24 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // const post = await orm.em.find(Post, {id: 4});
     // console.log(post)
     const app = (0, express_1.default)();
+    app.use(session({
+        store: new (require('connect-pg-simple')(session))({
+            conString: "pg://postgres:postgres@localhost:5432/lireddit",
+        }),
+        secret: process.env.FOO_COOKIE_SECRET || "devsecret",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        }, // 30 day
+        // Insert express-session options here
+    }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
             resolvers: [hello_1.HelloResolver, posts_1.PostResolver, users_1.UserResolver],
             validate: false,
         }),
-        context: () => ({ em: orm.em })
+        context: ({ req, res }) => ({ em: orm.em, req, res })
     });
     yield apolloServer.start();
     yield apolloServer.applyMiddleware({ app });
