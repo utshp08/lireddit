@@ -41,6 +41,39 @@ __decorate([
 UsernameAndPasswordInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], UsernameAndPasswordInput);
+let FieldError = class FieldError {
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], FieldError.prototype, "field", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], FieldError.prototype, "message", void 0);
+FieldError = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], FieldError);
+let UserResponse = class UserResponse {
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => [FieldError], { nullable: true }),
+    __metadata("design:type", Array)
+], UserResponse.prototype, "errors", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => User_1.User, { nullable: true }),
+    __metadata("design:type", User_1.User)
+], UserResponse.prototype, "user", void 0);
+UserResponse = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], UserResponse);
+// function TestDecorator() {
+//     return function(target: any) {
+//     }
+// }
+// @TestDecorator()
+// class Test {
+// }
 let UserResolver = class UserResolver {
     users({ em }) {
         const users = em.find("User", {});
@@ -52,25 +85,72 @@ let UserResolver = class UserResolver {
     }
     Register(options, { em }) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (options.username.length <= 3) {
+                return {
+                    errors: [
+                        {
+                            field: "username",
+                            message: "username is too short."
+                        }
+                    ]
+                };
+            }
+            if (options.password.length <= 3) {
+                return {
+                    errors: [
+                        {
+                            field: "password",
+                            message: "password is too short."
+                        }
+                    ]
+                };
+            }
             const hashPass = yield argon2_1.default.hash(options.password);
             const user = yield em.create("User", { username: options.username, password: hashPass });
-            yield em.persistAndFlush(user);
-            return user;
+            try {
+                yield em.persistAndFlush(user);
+            }
+            catch (error) {
+                console.log(error);
+                return {
+                    errors: [{
+                            field: "username",
+                            message: error.detail
+                        }]
+                };
+            }
+            return {
+                user
+            };
         });
     }
     Login(options, { em }) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield em.findOne("User", { username: options.username });
             if (!user) {
-                return null;
+                return {
+                    errors: [
+                        {
+                            field: "username",
+                            message: "username not found."
+                        }
+                    ]
+                };
             }
             const match = yield argon2_1.default.verify(user === null || user === void 0 ? void 0 : user.password, options.password);
-            if (match) {
-                return user;
+            if (!match) {
+                return {
+                    errors: [
+                        {
+                            field: "password",
+                            message: "incorrect password."
+                        }
+                    ]
+                };
             }
-            else {
-                return null;
-            }
+            return {
+                user
+            };
         });
     }
 };
@@ -90,7 +170,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserResolver.prototype, "user", null);
 __decorate([
-    (0, type_graphql_1.Mutation)(() => User_1.User),
+    (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options')),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
@@ -98,7 +178,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "Register", null);
 __decorate([
-    (0, type_graphql_1.Query)(() => User_1.User, { nullable: true }),
+    (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options')),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
