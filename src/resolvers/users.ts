@@ -1,6 +1,6 @@
 import { User } from "../entities/User";
 import { MyContext } from "src/types";
-import { Query, Resolver, Ctx, Arg, Int, Mutation, InputType, Field, ObjectType } from "type-graphql";
+import { Query, Resolver, Ctx, Arg, Mutation, InputType, Field, ObjectType } from "type-graphql";
 import argon2 from 'argon2';
 
 @InputType()

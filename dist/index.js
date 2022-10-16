@@ -20,6 +20,7 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const posts_1 = require("./resolvers/posts");
 const users_1 = require("./resolvers/users");
+const constants_1 = require("./constants");
 const session = require('express-session');
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const orm = yield core_1.MikroORM.init(mikro_orm_config_1.default);
@@ -38,6 +39,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         saveUninitialized: false,
         cookie: {
             maxAge: 30 * 24 * 60 * 60 * 1000,
+            secure: constants_1.__prod__,
         }, // 30 day
         // Insert express-session options here
     }));
