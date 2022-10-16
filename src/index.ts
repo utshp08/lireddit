@@ -30,6 +30,7 @@ const main = async () => {
         saveUninitialized: false,
         cookie: {
             maxAge: 30 * 24 * 60 * 60 * 1000,
+            secure: __prod__,
         }, // 30 day
         // Insert express-session options here
     }));
